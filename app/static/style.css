@@ -1,0 +1,137 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+    line-height: 1.6;
+}
+
+.header {
+    background: #123b35;
+    color: white;
+    text-align: center;
+    padding: 35px 20px;
+}
+
+.header h1 {
+    margin: 0 0 8px;
+    font-size: 2rem;
+}
+
+.header p {
+    margin: 0;
+    color: #d1fae5;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    align-items: start;
+}
+
+.panel {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.08);
+}
+
+.panel h2 {
+    margin-top: 0;
+    color: #123b35;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font: inherit;
+    background: white;
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: 2px solid #0f766e;
+    outline-offset: 1px;
+}
+
+button {
+    width: 100%;
+    margin-top: 22px;
+    padding: 13px;
+    border: none;
+    border-radius: 6px;
+    background: #0f766e;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #115e59;
+}
+
+#form-message {
+    overflow-wrap: anywhere;
+}
+
+.incident-card {
+    margin-top: 14px;
+    padding: 15px;
+    border-left: 4px solid #0f766e;
+    background: #f8fafc;
+    border-radius: 5px;
+    overflow-wrap: anywhere;
+}
+
+.incident-card h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: #0f766e;
+}
+
+.incident-card p {
+    margin: 7px 0;
+}
+
+@media (max-width: 700px) {
+    .container {
+        grid-template-columns: 1fr;
+        margin-top: 18px;
+        padding: 0 12px;
+    }
+
+    .header {
+        padding: 28px 15px;
+    }
+
+    .panel {
+        padding: 18px;
+    }
+}

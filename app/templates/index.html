@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Community Security Guard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>Community Safety</h1>
+        <p>Report incidents and help keep our community safe.</p>
+    </header>
+
+    <main class="container">
+        <section class="panel">
+            <h2>Report an Incident</h2>
+            <p>Provide accurate information about what happened.</p>
+
+            <form id="incident-form">
+                <label for="description">What happened?</label>
+                <textarea id="description" name="description"
+                    minlength="5" maxlength="2000"
+                    placeholder="Describe the incident..." required></textarea>
+
+                <label for="location">Location</label>
+                <input id="location" name="location"
+                    placeholder="e.g. Community gate" minlength="2"
+                    maxlength="200" required>
+
+                <label for="category">Incident category</label>
+                <select id="category" name="category" required>
+                    <option value="other">Other</option>
+                    <option value="security">Security</option>
+                    <option value="fire">Fire</option>
+                    <option value="medical">Medical</option>
+                    <option value="accident">Accident</option>
+                </select>
+
+                <label for="urgency">Urgency</label>
+                <select id="urgency" name="urgency" required>
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                    <option value="critical">Critical</option>
+                </select>
+
+                <label for="language">Report language</label>
+                <select id="language" name="language" required>
+                    <option value="English">English</option>
+                    <option value="Nigerian Pidgin">Nigerian Pidgin</option>
+                </select>
+
+                <button type="submit">Submit Report</button>
+                <p id="form-message" role="status"></p>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h2>Reported Incidents</h2>
+            <p id="incident-count">Loading incidents...</p>
+            <div id="incident-list"></div>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById("incident-form");
+        const message = document.getElementById("form-message");
+        const incidentList = document.getElementById("incident-list");
+        const incidentCount = document.getElementById("incident-count");
+
+        async function loadIncidents() {
+            try {
+                const response = await fetch("/incidents");
+                if (!response.ok) {
+                    throw new Error("Could not load incidents.");
+                }
+
+                const data = await response.json();
+                incidentCount.textContent =
+                    `${data.count} incident(s) reported`;
+
+                incidentList.replaceChildren();
+
+                if (data.incidents.length === 0) {
+                    incidentList.textContent = "No incidents reported yet.";
+                    return;
+                }
+
+                data.incidents.forEach((incident) => {
+                    const card = document.createElement("article");
+                    card.className = "incident-card";
+
+                    const title = document.createElement("h3");
+                    title.textContent = incident.category.toUpperCase();
+
+                    const description = document.createElement("p");
+                    description.textContent = incident.description;
+
+                    const details = document.createElement("p");
+                    details.textContent =
+                        `Location: ${incident.location} | Urgency: ${incident.urgency}`;
+
+                    const status = document.createElement("p");
+                    status.textContent = `Status: ${incident.status}`;
+
+                    card.append(title, description, details, status);
+                    incidentList.appendChild(card);
+                });
+            } catch (error) {
+                incidentCount.textContent = "Unable to load incidents.";
+            }
+        }
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            message.textContent = "Submitting report...";
+
+            const report = {
+                description: form.description.value.trim(),
+                location: form.location.value.trim(),
+                category: form.category.value,
+                urgency: form.urgency.value,
+                language: form.language.value
+            };
+
+            try {
+                const response = await fetch("/incidents", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(report)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        result.detail
+                            ? JSON.stringify(result.detail)
+                            : "Report could not be submitted."
+                    );
+                }
+
+                message.textContent = "Report submitted successfully!";
+                form.reset();
+                await loadIncidents();
+            } catch (error) {
+                message.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        loadIncidents();
+    </script>
+</body>
+</html>
